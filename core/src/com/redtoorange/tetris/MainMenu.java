@@ -10,9 +10,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.redtoorange.tetris.tetraminos.JTetra;
-import com.redtoorange.tetris.tetraminos.LTetra;
-import com.redtoorange.tetris.tetraminos.Tetramino;
+import com.redtoorange.tetris.tetraminos.*;
+
+import java.util.Random;
 
 /**
  * ${FILE_NAME}.java - Description
@@ -32,6 +32,8 @@ public class MainMenu extends ScreenAdapter {
 
     Tetramino testTetra;
     GameBoard board;
+    float widthPPU;
+    float heightPPU;
 
     @Override
     public void render( float delta ) {
@@ -44,21 +46,26 @@ public class MainMenu extends ScreenAdapter {
     public void update( float deltaTime ){
         handleInput();
         updateBlocks( deltaTime );
+        board.update( deltaTime );
     }
 
     @Override
     public void show() {
         super.show();
 
+        widthPPU = Constants.WINDOW_WIDTH / Constants.WORLD_WIDTH;
+        heightPPU = Constants.WINDOW_HEIGHT/ Constants.WORLD_HEIGHT;
+
         batch = new SpriteBatch(  );
         camera = new OrthographicCamera( Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
         viewport = new FitViewport( Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, camera );
+        camera.translate( MathUtils.floor(Constants.WORLD_WIDTH/2.0f), MathUtils.ceil(Constants.WORLD_HEIGHT/2.0f) );
 
         shapeRenderer = new ShapeRenderer(  );
 
-        board = new GameBoard( Constants.WORLD_WIDTH, Constants.WINDOW_HEIGHT );
-//        testTetra = new SquareTetra( 0, MathUtils.ceil(Constants.WORLD_HEIGHT/2.0f)+1);
-        testTetra = new JTetra( board, 0, MathUtils.ceil(Constants.WORLD_HEIGHT/2.0f)+1);
+        board = new GameBoard( Constants.COLUMNS, Constants.ROWS );
+
+        testTetra = generateBlock();
     }
 
     public void draw(){
@@ -69,12 +76,19 @@ public class MainMenu extends ScreenAdapter {
         shapeRenderer.setColor( Color.RED );
         shapeRenderer.box( 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 1 );
 
+        shapeRenderer.setColor( Color.BLUE );
+        shapeRenderer.box( widthPPU/2, 0, 0, Constants.COLUMNS * widthPPU, Constants.ROWS * heightPPU, 1 );
+
+
         shapeRenderer.end();
 
         batch.setProjectionMatrix( camera.combined );
         batch.begin();
+
         //Draw shit
         testTetra.draw( batch );
+        board.draw( batch );
+
         batch.end();
     }
 
@@ -89,8 +103,11 @@ public class MainMenu extends ScreenAdapter {
     public void handleInput(){
         if( Gdx.input.isKeyJustPressed( Input.Keys.W )){
             //Instant drop
+            while( testTetra.translate( 0, -1 ) ) {
+                //Stubb
+            }
         }
-        if( Gdx.input.isKeyJustPressed( Input.Keys.S )){
+        if( Gdx.input.isKeyPressed( Input.Keys.S )){
             //Increase velocity
             testTetra.translate( 0, -1 );
         }
@@ -117,7 +134,7 @@ public class MainMenu extends ScreenAdapter {
 
             if( !moved ){
                 board.addTetra( testTetra );
-                testTetra = new LTetra( board, 0, MathUtils.ceil(Constants.WORLD_HEIGHT/2.0f)+1 );
+                testTetra = generateBlock();
             }
 
             currentTime = coolDown;
@@ -126,5 +143,27 @@ public class MainMenu extends ScreenAdapter {
         {
             currentTime -= deltaTime;
         }
+    }
+
+    public Tetramino generateBlock(){
+        Random r = new Random( System.currentTimeMillis()  );
+        int i = r.nextInt( Type.COUNT.getIndex() );
+
+        Tetramino t = null;
+
+        if(i == Type.JTetra.getIndex()){
+            t = new JTetra( board, Constants.COLUMNS/2, Constants.ROWS );
+        }
+        else if(i == Type.LTetra.getIndex()){
+            t = new LTetra( board, Constants.COLUMNS/2, Constants.ROWS );
+        }
+        else if(i == Type.LineTetra.getIndex()){
+            t = new LineTetra( board, Constants.COLUMNS/2, Constants.ROWS );
+        }
+        else if(i == Type.SquareTetra.getIndex()){
+            t = new SquareTetra( board, Constants.COLUMNS/2, Constants.ROWS );
+        }
+
+       return t;
     }
 }

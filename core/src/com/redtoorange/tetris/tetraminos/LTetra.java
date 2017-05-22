@@ -1,6 +1,7 @@
 package com.redtoorange.tetris.tetraminos;
 
 import com.redtoorange.tetris.GameBoard;
+import com.redtoorange.tetris.MoveVector;
 
 /**
  * ${FILE_NAME}.java - Description
@@ -16,25 +17,24 @@ public class LTetra extends Tetramino {
     }
 
     /**
-     *
-     *  1
-     *  2
-     *  34
+     * 1
+     * 2
+     * 34
      *
      * @param x
      * @param y
      */
     @Override
     protected void initBlocks( int x, int y ) {
-        blocks[0] = new Block( x, y+2 );
-        blocks[1] = new Block( x, y+1 );
+        blocks[0] = new Block( x, y + 2 );
+        blocks[1] = new Block( x, y + 1 );
         blocks[2] = new Block( x, y );
-        blocks[3] = new Block( x+1, y );
+        blocks[3] = new Block( x + 1, y );
     }
 
     @Override
     public void rotate() {
-        switch(orientation){
+        switch ( orientation ) {
             case DOWN:
                 rotateRight();
                 break;
@@ -51,54 +51,84 @@ public class LTetra extends Tetramino {
     }
 
     /**
-     *    3
-     *  0x2
-     *
+     * 3
+     * 0x2
      */
-    private void rotateRight(){
-        orientation = Orientation.RIGHT;
+    private void rotateRight() {
+        MoveVector[] mv = {
+                new MoveVector( blocks[0].getX() - 1, blocks[0].getY() - 1 ),
+                new MoveVector( blocks[2].getX() + 1, blocks[2].getY() + 1 ),
+                new MoveVector( blocks[3].getX(), blocks[3].getY() + 2 )
+        };
 
-        blocks[0].translate(-1, -1  );
-        blocks[2].translate(1, 1 );
-        blocks[3].translate(0, 2 );
+        if ( board.legalRotation( mv ) ) {
+            orientation = Orientation.RIGHT;
 
+            blocks[0].translate( -1, -1 );
+            blocks[2].translate( 1, 1 );
+            blocks[3].translate( 0, 2 );
+        }
     }
 
     /**
-     *      32
-     *       x
-     *       0
+     * 32
+     * x
+     * 0
      */
-    private void rotateUp(){
-        orientation = Orientation.UP;
+    private void rotateUp() {
+        MoveVector[] mv = {
+                new MoveVector( blocks[0].getX() + 1, blocks[0].getY() - 1 ),
+                new MoveVector( blocks[2].getX() - 1, blocks[2].getY() + 1 ),
+                new MoveVector( blocks[3].getX() - 2, blocks[3].getY() )
+        };
 
-        blocks[0].translate(1, -1  );
-        blocks[2].translate(-1, 1 );
-        blocks[3].translate(-2, 0 );
+        if ( board.legalRotation( mv ) ) {
+            orientation = Orientation.UP;
+
+            blocks[0].translate( 1, -1 );
+            blocks[2].translate( -1, 1 );
+            blocks[3].translate( -2, 0 );
+        }
     }
 
     /**
-     *      2x0
-     *      3
+     * 2x0
+     * 3
      */
-    private void rotateLeft(){
-        orientation = Orientation.LEFT;
+    private void rotateLeft() {
+        MoveVector[] mv = {
+                new MoveVector( blocks[0].getX() + 1, blocks[0].getY() + 1 ),
+                new MoveVector( blocks[2].getX() - 1, blocks[2].getY() - 1 ),
+                new MoveVector( blocks[3].getX(), blocks[3].getY() - 2 )
+        };
 
-        blocks[0].translate(1, 1  );
-        blocks[2].translate(-1, -1 );
-        blocks[3].translate(0, -2 );
+        if ( board.legalRotation( mv ) ) {
+            orientation = Orientation.LEFT;
+
+            blocks[0].translate( 1, 1 );
+            blocks[2].translate( -1, -1 );
+            blocks[3].translate( 0, -2 );
+        }
     }
 
     /**
-     *      0
-     *      x
-     *      23
+     * 0
+     * x
+     * 23
      */
-    private void rotateDown(){
-        orientation = Orientation.DOWN;
+    private void rotateDown() {
+        MoveVector[] mv = {
+                new MoveVector( blocks[0].getX() - 1, blocks[0].getY() + 1 ),
+                new MoveVector( blocks[2].getX() + 1, blocks[2].getY() - 1 ),
+                new MoveVector( blocks[3].getX() + 2, blocks[3].getY() )
+        };
 
-        blocks[0].translate(-1, 1  );
-        blocks[2].translate(1, -1 );
-        blocks[3].translate(2, 0 );
+        if ( board.legalRotation( mv ) ) {
+            orientation = Orientation.DOWN;
+
+            blocks[0].translate( -1, 1 );
+            blocks[2].translate( 1, -1 );
+            blocks[3].translate( 2, 0 );
+        }
     }
 }

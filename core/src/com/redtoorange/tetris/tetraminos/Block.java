@@ -12,33 +12,27 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  */
 public class Block {
     private Sprite sprite;
-    private int x;
-    private int y;
 
     public Block(int x, int y){
         sprite = new Sprite( new Texture( "block.png" ) );
         sprite.setPosition( x, y );
         sprite.setSize( 1, 1 );
-
-        this.x = x;
-        this.y = y;
     }
 
     public int getX(){
-        return x;
+        return (int)sprite.getX();
     }
 
     public int getY(){
-        return y;
+        return (int)sprite.getY();
     }
 
     public void translate( int dx, int dy){
-        x += dx;
-        y += dy;
+        sprite.translate( dx, dy );
     }
 
     public void update(){
-        sprite.setPosition( x, y );
+//        sprite.setPosition( x, y );
     }
 
     public void draw( SpriteBatch batch ){

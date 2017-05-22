@@ -53,4 +53,5 @@ public abstract class Tetramino {
     }
     protected abstract void initBlocks(int x, int y);
     public abstract void rotate();
+
 }
